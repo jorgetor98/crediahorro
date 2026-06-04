@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SocioGestión Enterprise Smart Client</title>
+    
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CrediAhorro">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+    <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22CrediAhorro%22%2C%22short_name%22%3A%22CrediAhorro%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23000000%22%2C%22theme_color%22%3A%22%23000000%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fcdn-icons-png.flaticon.com%2F512%2F3135%2F3135715.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        .ndfHFb-c43HAb-WrNpe, .ndfHFb-c43HAb-WrNpe-OW33fe, div[id*="viewer-banner"], div[class*="viewer-banner"], .goog-inline-block, [id="docs-aria-speakable-aria-live-region"] { 
+            display: none !important;
+            height: 0px !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important;
+        }
+        html, body { position: absolute; top: 0 !important; left: 0;
+            width: 100% !important; height: 100% !important; margin: 0 !important; padding: 0 !important;
+        }
+
+        :root {
+            --bg-dark-total: #000000;
+            --bg-dark-panel: #1A1A1A;
+            --bg-dark-input: #262626;
+            --accent-green-neon: #DEFF9A;
+            --accent-green-soft: #DAFFDE;
+            --text-white: #F5F5F5;
+            --text-muted: #8E8E8E;
+            --border-color: #333333;
+            --danger: #ff8a8a;
+            --success: #8aff9c;
+            --info: #8ae4ff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Urbanist', sans-serif;
+        -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-dark-total); color: var(--text-white); display: flex; flex-direction: row;
+        height: 100vh; overflow: hidden; }
+
+        .app-container { display: flex; width: 100%; height: 100vh; overflow: hidden; }
+        .sidebar { width: 280px; background-color: var(--bg-dark-total); border-right: 1px solid var(--border-color);
+        display: flex; flex-direction: column; padding: 30px 20px; flex-shrink: 0; }
+        .sidebar-brand { font-size: 24px; font-weight: 700; margin-bottom: 40px; display: flex; align-items: center; gap: 12px; }
+        .sidebar-brand i { color: var(--accent-green-neon); }
+        .sidebar-menu { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+        .sidebar-item { padding: 14px 20px; border-radius: 14px; display: flex; align-items: center;
+        gap: 14px; cursor: pointer; color: var(--text-muted); font-weight: 500; transition: 0.2s; }
+        .sidebar-item:hover, .sidebar-item.active { color: var(--text-white); }
+        .sidebar-item.active { background-color: var(--bg-dark-panel); color: var(--accent-green-neon);
+        border: 1px solid rgba(222, 255, 154, 0.2); }
+        
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; padding: 40px 60px;
+        overflow-y: auto; width: 100%; }
+        .header-section { margin-bottom: 30px; }
+        .header-section h1 { font-size: 32px; font-weight: 700; }
+        .header-section p { color: var(--accent-green-soft); font-size: 15px; opacity: 0.8; }
+
+        .page-view { display: none; width: 100%; animation: fadeIn 0.25s ease-out forwards; }
+        .page-view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
+        .metric-card { background: var(--bg-dark-panel); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; }
+        .metric-card h3 { font-size: 13px; color: var(--text-muted); text-transform: uppercase; }
+        .metric-card .value { font-size: 30px; font-weight: 700; margin-top: 10px; }
+
+        .panel-form { background: var(--bg-dark-panel); border: 1px solid var(--border-color); border-radius: 20px; padding: 30px;
+        max-width: 650px; margin-bottom: 30px; }
+        .form-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
+        .form-control { width: 100%; background: var(--bg-dark-input); border: 1px solid var(--border-color); border-radius: 12px;
+        padding: 14px; color: var(--text-white); font-size: 16px; }
+        
+        .btn-submit { background: var(--accent-green-neon); color: var(--bg-dark-total); width: 100%; padding: 16px; border: none; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-secondary { background: var(--bg-dark-input); color: var(--text-white); border: 1px solid var(--border-color); padding: 10px 16px; border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+
+        .table-container { background: var(--bg-dark-panel); border: 1px solid var(--border-color); border-radius: 16px; padding: 15px; overflow-x: auto; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 500px; }
+        th { padding: 12px; color: var(--accent-green-neon); border-bottom: 1px solid var(--border-color); font-size: 13px; }
+        td { padding: 14px 12px; border-bottom: 1px solid var(--border-color); font-size: 14px; }
+
+        .grid-asistencia { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px; }
+        .box-asistencia { background: var(--bg-dark-panel); border: 1px solid var(--border-color); border-radius: 16px; padding: 20px; }
+        .box-asistencia h4 { margin-bottom: 15px; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+        .item-socio-status { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #262626; font-size: 14px; }
+
+        .captura-zona-premium { background: #111111; border: 2px dashed var(--accent-green-neon); padding: 30px; border-radius: 16px; margin-top: 25px; max-width: 450px; text-align: center; color: #fff; }
+        .recibo-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; border-bottom: 1px solid #222; padding-bottom: 5px; }
+        .tabla-captura-imagen { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; }
+        .tabla-captura-imagen th { background: #222; color: #DAFFDE; padding: 8px; border-bottom: 1px solid #333; }
+        .tabla-captura-imagen td { padding: 8px; border-bottom: 1px solid #222; }
+
+        .sub-tabla-detalles { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+        .sub-tabla-detalles th { color: var(--text-white); border-bottom: 1px solid var(--border-color); padding: 8px 5px; font-weight: 600; }
+        .sub-tabla-detalles td { padding: 10px 5px; border-bottom: 1px solid #262626; color: var(--text-white); }
+
+        .toast { position: fixed; bottom: 30px; right: 20px; left: 20px; text-align: center; background: var(--bg-dark-panel); border: 1px solid var(--accent-green-neon); padding: 14px; border-radius: 12px; display: none; z-index: 2000; box-shadow: 0px 4px 15px rgba(222, 255, 154, 0.3); }
+        
+        .badge-tipo { padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; display: inline-block; }
+        .badge-ingreso { background: rgba(138, 255, 156, 0.15); color: var(--success); }
+        .badge-desembolso { background: rgba(255, 138, 138, 0.15); color: var(--danger); }
+        .badge-abono { background: rgba(138, 228, 255, 0.15); color: var(--info); }
+
+        /* Regla estricta para ocultar módulos cuando el modo socio está activo */
+        body.modo-socio .admin-only-item { display: none !important; }
+
+        /* ESTILOS PARA BLOQUES DE AGENDA */
+        .agenda-block { background: var(--bg-dark-panel); border-left: 4px solid var(--info); padding: 15px; border-radius: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .agenda-block h5 { font-size: 16px; margin-bottom: 4px; color: var(--text-white); }
+        .agenda-block p { font-size: 13px; color: var(--text-muted); margin: 0; }
+        .agenda-block .time-badge { background: var(--bg-dark-input); padding: 8px 12px; border-radius: 8px; font-weight: 700; color: var(--accent-green-neon); }
+
+        /* TOGGLE SWITCH ROL */
+        .switch-container { display: flex; align-items: center; gap: 10px; background: #111; padding: 10px 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 20px; width: fit-content; }
+        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #444; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--accent-green-neon); }
+        input:checked + .slider:before { transform: translateX(20px); background-color: #000; }
+
+        .mobile-header, .mobile-dropdown { display: none; }
+
+        /* OPTIMIZACIÓN MÓVIL Y CORRECCIÓN DE SCROLL */
+        @media (max-width: 850px) {
+            body { flex-direction: column; } 
+            
+            .app-container { height: 100vh; padding-top: 70px; overflow: hidden; display: flex; flex-direction: column; } 
+            .sidebar { display: none; }
+            
+            .mobile-header {
+                display: flex; justify-content: space-between; align-items: center;
+                background-color: var(--bg-dark-total); border-bottom: 1px solid var(--border-color);
+                height: 70px; width: 100%; position: fixed; top: 0; left: 0; z-index: 1000; padding: 0 20px;
+            }
+            .mobile-header .sidebar-brand { margin-bottom: 0; font-size: 22px; color: var(--text-white); display: flex; align-items: center; gap: 10px; font-weight: 700; }
+            .mobile-header .sidebar-brand i { color: var(--accent-green-neon); }
+            .mobile-menu-btn { background: none; border: none; color: var(--accent-green-neon); font-size: 26px; cursor: pointer; }
+            
+            .mobile-dropdown {
+                display: none; position: fixed; top: 70px; left: 0; width: 100%;
+                background-color: var(--bg-dark-panel); border-bottom: 1px solid var(--border-color);
+                z-index: 999; flex-direction: column;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.5);
+            }
+            .mobile-dropdown.show { display: flex; }
+            .mobile-nav-item {
+                padding: 16px 20px; color: var(--text-muted); font-size: 15px; font-weight: 500;
+                border-bottom: 1px solid #262626; display: flex; align-items: center; gap: 12px; cursor: pointer;
+            }
+            .mobile-nav-item.active { color: var(--accent-green-neon); background: var(--bg-dark-total); }
+            .mobile-nav-item i { width: 20px; text-align: center; }
+
+            .main-content { 
+                padding: 20px; 
+                padding-bottom: 60px; 
+                height: 100%; 
+                overflow-y: auto; 
+                -webkit-overflow-scrolling: touch; 
+                flex-grow: 1;
+            }
+            
+            .metrics-grid, .form-grid-3, .grid-asistencia { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-header">
+        <div class="sidebar-brand"><i class="fa-solid fa-building-columns"></i> <span>CrediAhorro</span></div>
+        <button class="mobile-menu-btn" onclick="document.getElementById('mobile-dropdown').classList.toggle('show')">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </div>
+
+    <div class="mobile-dropdown" id="mobile-dropdown">
+        <div class="mobile-nav-item active" onclick="cambiarSeccion('view-dashboard', this)"><i class="fa-solid fa-chart-pie"></i> Dashboard</div>
+        <div class="mobile-nav-item" onclick="cambiarSeccion('view-listado', this)"><i class="fa-solid fa-users"></i> Directorio Socios</div>
+        <div class="mobile-nav-item" onclick="cambiarSeccion('view-calendario', this)"><i class="fa-solid fa-calendar-days"></i> Agenda de Pagos</div>
+        <div class="mobile-nav-item admin-only-item" onclick="cambiarSeccion('view-registro', this)"><i class="fa-solid fa-user-plus"></i> Registrar Nuevo</div>
+        <div class="mobile-nav-item admin-only-item" onclick="cambiarSeccion('view-caja', this)"><i class="fa-solid fa-wallet"></i> Caja y Cuotas</div>
+        <div class="mobile-nav-item admin-only-item" onclick="cambiarSeccion('view-creditos', this)"><i class="fa-solid fa-hand-holding-dollar"></i> Otorgar Crédito</div>
+        <div class="mobile-nav-item admin-only-item" onclick="cambiarSeccion('view-abonos', this)"><i class="fa-solid fa-money-bill-transfer"></i> Registro de Abonos</div>
+    </div>
+
+    <div class="app-container">
+        <nav class="sidebar">
+            <div class="sidebar-brand"><i class="fa-solid fa-building-columns"></i> <span>CrediAhorro</span></div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item active" onclick="cambiarSeccion('view-dashboard', this)"><i class="fa-solid fa-chart-pie"></i> Dashboard</li>
+                <li class="sidebar-item" onclick="cambiarSeccion('view-listado', this)"><i class="fa-solid fa-users"></i> Directorio Socios</li>
+                <li class="sidebar-item" onclick="cambiarSeccion('view-calendario', this)"><i class="fa-solid fa-calendar-days"></i> Agenda de Pagos</li>
+                <li class="sidebar-item admin-only-item" onclick="cambiarSeccion('view-registro', this)"><i class="fa-solid fa-user-plus"></i> Registrar Nuevo</li>
+                <li class="sidebar-item admin-only-item" onclick="cambiarSeccion('view-caja', this)"><i class="fa-solid fa-wallet"></i> Caja y Cuotas</li>
+                <li class="sidebar-item admin-only-item" onclick="cambiarSeccion('view-creditos', this)"><i class="fa-solid fa-hand-holding-dollar"></i> Otorgar Crédito</li>
+                <li class="sidebar-item admin-only-item" onclick="cambiarSeccion('view-abonos', this)"><i class="fa-solid fa-money-bill-transfer"></i> Registro de Abonos</li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            
+            <div class="switch-container">
+                <span style="font-size:13px; font-weight:600; color:var(--text-muted);">Vista Socio</span>
+                <label class="switch">
+                    <input type="checkbox" id="rol-toggle" checked onchange="aplicarRolSeguro()">
+                    <span class="slider"></span>
+                </label>
+                <span style="font-size:13px; font-weight:600; color:var(--accent-green-neon);">Admin Total</span>
+            </div>
+
+            <div id="view-dashboard" class="page-view active">
+                <div class="header-section"><h1>Dashboard</h1><p>Control de tesorería y saldos líquidos.</p></div>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card"><h3>Liquidez Disponible</h3><div class="value" id="num-fondo" style="color:var(--accent-green-neon);">$0.00</div></div>
+                    <div class="metric-card"><h3>Capital Prestado</h3><div class="value" id="num-prestado">$0.00</div></div>
+                    <div class="metric-card"><h3>Socios Registrados</h3><div class="value" id="num-socios">0</div></div>
+                </div>
+                
+                <div class="metrics-grid" style="grid-template-columns: repeat(2, 1fr); margin-top: -10px;">
+                    <div class="metric-card" style="border-top: 3px solid var(--info);"><h3>Intereses Cobrados (Histórico)</h3><div class="value" id="num-intereses" style="color:var(--info);">$0.00</div></div>
+                    <div class="metric-card" style="border-top: 3px solid var(--danger);"><h3>Multas Recaudadas</h3><div class="value" id="num-multas" style="color:var(--danger);">$0.00</div></div>
+                </div>
+            </div>
+
+            <div id="view-calendario" class="page-view">
+                <div class="header-section"><h1>Agenda de Compromisos</h1><p>Visualización de bloques de tiempo y créditos activos.</p></div>
+                <div id="contenedor-agenda" style="max-width: 650px;">
+                    <p style="color:var(--text-muted);">Cargando bloques de horario...</p>
+                </div>
+            </div>
+
+            <div id="view-listado" class="page-view">
+                <div class="header-section" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:15px; align-items:center;">
+                    <div><h1>Directorio de Socios</h1><p>Consulta estados individuales, expedientes de aportes y créditos.</p></div>
+                    <button class="btn-secondary" onclick="exportarCSV()"><i class="fa-solid fa-file-csv"></i> Exportar a Excel (CSV)</button>
+                </div>
+                
+                <div class="table-container">
+                    <table id="tabla-exportable">
+                        <thead>
+                            <tr><th>ID</th><th>Nombre</th><th>Ahorros Totales</th><th>Deuda Actual</th><th>Acción</th></tr>
+                        </thead>
+                        <tbody id="tabla-directorio-cuerpo"></tbody>
+                    </table>
+                </div>
+
+                <div id="ficha-socio-desplegable" style="display:none; margin-top:30px; background:var(--bg-dark-panel); padding:30px; border-radius:20px; border:1px solid var(--accent-green-neon);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
+                        <div>
+                            <h2 style="color:var(--accent-green-neon); margin-bottom: 2px;" id="f-nombre">Expediente Individual</h2>
+                            <p style="font-size:13px; color:var(--text-muted);">Código de Registro: <span id="f-id" style="color:var(--text-white); font-weight:600;">-</span></p>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn-secondary" onclick="document.getElementById('ficha-socio-desplegable').style.display='none'">Cerrar Ficha</button>
+                            <button class="btn-secondary admin-only-item" style="border-color:var(--danger); color:var(--danger);" onclick="ejecutarEliminarSocio()">
+                                <i class="fa-solid fa-user-minus"></i> Eliminar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="metrics-grid" style="grid-template-columns: repeat(3, 1fr); gap:15px; margin-bottom:30px;">
+                        <div style="background:var(--bg-dark-input); padding:15px; border-radius:12px; border:1px solid var(--border-color);">
+                            <span style="font-size:12px; color:var(--text-muted); display:block;">FONDO DE AHORROS TOTAL</span>
+                            <strong style="font-size:22px; color:var(--accent-green-neon);" id="f-ahorro">$0.00</strong>
+                        </div>
+                        <div style="background:var(--bg-dark-input); padding:15px; border-radius:12px; border:1px solid var(--border-color);">
+                            <span style="font-size:12px; color:var(--text-muted); display:block;">DEUDA ACTUAL ACUMULADA</span>
+                            <strong style="font-size:22px; color:var(--danger);" id="f-deuda">$0.00</strong>
+                        </div>
+                        <div style="background:var(--bg-dark-input); padding:15px; border-radius:12px; border:1px solid var(--border-color);">
+                            <span style="font-size:12px; color:var(--text-muted); display:block;">CARGOS POR MULTAS</span>
+                            <strong style="font-size:22px; color:var(--text-white);" id="f-multas">$0.00</strong>
+                        </div>
+                    </div>
+
+                    <div class="grid-asistencia" style="grid-template-columns: 1fr; gap:25px; margin-top:0; margin-bottom: 25px;">
+                        <div style="background:#111; border:1px solid var(--border-color); border-radius:14px; padding:20px;">
+                            <h4 style="font-size:15px; color:var(--danger); margin-bottom:10px;"><i class="fa-solid fa-hand-holding-dollar"></i> Estado de Créditos Vigentes</h4>
+                            <div id="f-box-credito-activo"></div>
+                        </div>
+                    </div>
+
+                    <div style="background:#111; border:1px solid var(--border-color); border-radius:14px; padding:25px;">
+                        <h4 style="font-size:16px; color:var(--accent-green-neon); margin-bottom:15px;"><i class="fa-solid fa-timeline"></i> Historial de Actividad Completo (Desde su Ingreso)</h4>
+                        <div style="max-height:400px; overflow-y:auto;" class="table-container">
+                            <table class="sub-tabla-detalles">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align:left;">Fecha</th>
+                                        <th style="text-align:left;">Concepto / Detalle</th>
+                                        <th style="text-align:center;">Tipo de Operación</th>
+                                        <th style="text-align:right;">Monto</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="f-tabla-historial-global-cuerpo"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-registro" class="page-view admin-only-item">
+                <div class="header-section"><h1>Alta de Integrantes</h1><p>Registro formal en base de datos.</p></div>
+                <div class="panel-form">
+                    <div class="form-group"><label>Nombre Completo</label><input type="text" id="reg-nombre" class="form-control" placeholder="Ej. Juan Pérez"></div>
+                    <div class="form-group"><label>Teléfono</label><input type="tel" id="reg-telefono" class="form-control" placeholder="Ej. 55123456"></div>
+                    <div class="form-group"><label>Aporte de Apertura ($)</label><input type="number" id="reg-inicial" class="form-control" value="0"></div>
+                    <button class="btn-submit" onclick="enviarSocioNuevo()">Guardar Registro</button>
+                </div>
+            </div>
+
+            <div id="view-caja" class="page-view admin-only-item">
+                <div class="header-section"><h1>Caja y Recepción de Cuotas</h1><p>Registra transacciones libres eligiendo fecha, integrante y concepto.</p></div>
+                <div class="panel-form">
+                    <h3 style="margin-bottom:15px; color:var(--accent-green-neon);">Efectuar Entrada de Caja</h3>
+                    <div class="form-group"><label>1. Selecciona el Integrante</label><select id="caja-socio" class="form-control"></select></div>
+                    <div class="form-grid-3" style="grid-template-columns: 1.5fr 1fr;">
+                        <div class="form-group"><label>2. Fecha de Recepción</label><input type="date" id="caja-fecha-movimiento" class="form-control"></div>
+                        <div class="form-group"><label>3. Monto Entregado ($)</label><input type="number" id="caja-monto" class="form-control" placeholder="0.00"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>4. ¿De qué abona? (Concepto)</label>
+                        <select id="caja-tipo" class="form-control">
+                            <option value="Cuota Semanal">Cuota Semanal Ordinaria</option>
+                            <option value="Ahorro Ordinario">Ahorro Ordinario Libre</option>
+                            <option value="Multa">Pago de Multa</option>
+                        </select>
+                    </div>
+                    <button class="btn-submit" onclick="guardarCaja()">Ejecutar Entrada de Dinero</button>
+                    <div id="caja-whatsapp-container"></div>
+                </div>
+
+                <div style="margin-top:20px; background: #0c0c0c; border: 1px solid var(--border-color); padding: 25px; border-radius: 20px;">
+                    <h3 style="color:var(--text-white); font-size: 18px; margin-bottom: 5px;">Auditoría de Cuotas Semanales</h3>
+                    <div style="display:flex; gap:15px; max-width:350px; align-items:center; margin-bottom:20px;">
+                        <input type="month" id="caja-mes-filtro" class="form-control" style="padding:10px;">
+                        <button class="btn-secondary" onclick="cargarListasAsistenciaCajaPorMes()" style="height: 48px; padding: 0 20px;">Auditar Mes</button>
+                    </div>
+                    <div class="grid-asistencia">
+                        <div class="box-asistencia" style="border-top:3px solid var(--success);">
+                            <h4><i class="fa-solid fa-circle-check" style="color:var(--success)"></i> Cuotas Cubiertas este Mes</h4>
+                            <div id="lista-asistencia-pagados"></div>
+                        </div>
+                        <div class="box-asistencia" style="border-top:3px solid var(--danger);">
+                            <h4><i class="fa-solid fa-circle-xmark" style="color:var(--danger)"></i> Sin Cuotas Registradas</h4>
+                            <div id="lista-asistencia-deudores"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-creditos" class="page-view admin-only-item">
+                <div class="header-section"><h1>Emisión de Créditos Inteligentes</h1><p>Planificación cronológica y simulación de amortización.</p></div>
+                <div class="panel-form">
+                    <div class="form-group"><label>Socio Beneficiario</label><select id="credito-socio" class="form-control"></select></div>
+                    
+                    <div class="form-group" style="background: var(--bg-dark-input); padding: 12px 16px; border-radius: 12px; border: 1px solid #333; margin-bottom: 18px;">
+                        <span style="font-size: 13px; color: var(--text-muted); display: block;"><i class="fa-solid fa-vault" style="color:var(--accent-green-neon);"></i> Liquidez Máxima para Préstamo:</span>
+                        <strong id="credito-liquidez-disponible" style="font-size: 18px; color: var(--accent-green-neon); font-weight: 700;">Cargando fondo...</strong>
+                    </div>
+
+                    <div class="form-group"><label>Monto Solicitado ($)</label><input type="number" id="credito-monto" class="form-control" placeholder="0.00"></div>
+                    <div class="form-grid-3">
+                        <div class="form-group"><label>Interés (%)</label><select id="credito-interes" class="form-control"><option value="10">10%</option><option value="15">15%</option><option value="20">20%</option></select></div>
+                        <div class="form-group"><label>Plazo Cuotas</label><select id="credito-cuotas" class="form-control"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select></div>
+                        <div class="form-group"><label>Frecuencia de Pago</label><select id="credito-frecuencia" class="form-control"><option value="Semanal">Semanal</option><option value="Quincenal">Quincenal</option><option value="Mensual">Mensual</option></select></div>
+                    </div>
+                    <div class="form-grid-3" style="grid-template-columns: 2fr 1fr;">
+                        <div class="form-group"><label>Fecha de Entrega</label><input type="date" id="credito-fecha-inicio" class="form-control"></div>
+                        <div class="form-group"><label>Hora (Texto estricto)</label><input type="time" id="credito-hora-inicio" class="form-control" value="12:00"></div>
+                    </div>
+                    <button class="btn-secondary" style="width:100%; padding:14px; margin-bottom:15px; border-color:var(--accent-green-neon); color:var(--accent-green-neon);" onclick="previsualizarAmortizacion()">
+                        <i class="fa-solid fa-eye"></i> Calcular y Ver Tabla de Amortización
+                    </button>
+                    <div id="box-tabla-previa" style="display:none; margin-bottom:20px;">
+                        <div class="captura-zona-premium" id="tabla-amortizacion-captura-zona">
+                            <h2>Plan de Pagos Oficial</h2>
+                            <div class="recibo-row"><span>Socio:</span><strong id="pre-socio-txt">Socio</strong></div>
+                            <div class="recibo-row"><span>Monto Capital:</span><strong id="pre-monto-txt">$0.00</strong></div>
+                            <div class="recibo-row"><span>Total con Interés:</span><strong id="pre-total-txt" style="color:var(--accent-green-neon)">$0.00</strong></div>
+                            <table class="tabla-captura-imagen">
+                                <thead><tr><th>Cuota</th><th>Fecha Límite</th><th>Monto Fijo</th></tr></thead>
+                                <tbody id="tabla-previa-cuerpo"></tbody>
+                            </table>
+                        </div>
+                        <button class="btn-secondary" style="margin-top:15px; width:100%; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="descargarTablaAmortizacionComoImagen()">
+                            <i class="fa-solid fa-download"></i> Descargar Imagen PNG de la Tabla de Pagos
+                        </button>
+                    </div>
+                    <button class="btn-submit" onclick="emitirCreditoDefinitivo()"><i class="fa-solid fa-check-double"></i> Conceder y Emitir Crédito Definitivo</button>
+                </div>
+
+                <div id="recibo-descargable" style="display:none;">
+                    <div class="captura-zona-premium" id="recibo-captura-zona">
+                        <h2>Comprobante de Crédito</h2>
+                        <div class="recibo-row"><span>ID del Crédito:</span><strong id="rec-id-cre">CRE-XYZ</strong></div>
+                        <div class="recibo-row"><span>Beneficiario:</span><strong id="rec-socio">Socio</strong></div>
+                        <div class="recibo-row"><span>Monto Financiado:</span><strong id="rec-monto">$0.00</strong></div>
+                        <div class="recibo-row"><span>Tasa Aplicada:</span><strong id="rec-interes">10%</strong></div>
+                        <div class="recibo-row"><span>Plazo y Frecuencia:</span><strong id="rec-plazo">4 Cuotas</strong></div>
+                        <div class="recibo-row"><span>Fecha Desembolso:</span><strong id="rec-fecha">00/00/0000</strong></div>
+                        <div class="recibo-row" style="border-top:1px dashed var(--accent-green-neon); padding-top:10px; margin-top:15px;"><span>TOTAL COMPROMETIDO:</span><strong id="rec-total" style="color:var(--accent-green-neon); font-size:16px;">$0.00</strong></div>
+                    </div>
+                    <button class="btn-secondary" style="margin-top:15px; max-width:450px; width:100%; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="descargarReciboComoImagen()">
+                        <i class="fa-solid fa-download"></i> Descargar Pagaré de Crédito (.PNG)
+                    </button>
+                </div>
+            </div>
+
+            <div id="view-abonos" class="page-view admin-only-item">
+                <div class="header-section"><h1>Cobranza de Amortizaciones</h1><p>Ingresa abonos controlados a créditos vigentes sin complicaciones de cuotas.</p></div>
+                <div class="panel-form">
+                    <div class="form-group"><label>Selecciona el Préstamo Vigente</label><select id="abono-credito" class="form-control"></select></div>
+                    <div class="form-group"><label>Dinero Recibido ($)</label><input type="number" id="abono-monto" class="form-control" placeholder="0.00"></div>
+                    <div class="form-group">
+                        <label>Concepto del Movimiento</label>
+                        <select id="abono-concepto" class="form-control">
+                            <option value="Abono Parcial a Crédito">Abono Parcial a Crédito</option>
+                            <option value="Liquidación Total de Crédito">Liquidación Total de Crédito (Cierra Cuenta)</option>
+                            <option value="Pago de Intereses Comunes">Pago Puro de Intereses</option>
+                        </select>
+                    </div>
+                    <button class="btn-submit" onclick="procesarAbono()">Registrar Cobro de Crédito</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        var liquidezGlobalCalculada = 0;
+        
+        window.onload = function() { 
+            var hoy = new Date().toISOString().split('T')[0];
+            if(document.getElementById('caja-fecha-movimiento')) document.getElementById('caja-fecha-movimiento').value = hoy;
+            if(document.getElementById('credito-fecha-inicio')) document.getElementById('credito-fecha-inicio').value = hoy;
+            var mesActual = hoy.substring(0,7);
+            if(document.getElementById('caja-mes-filtro')) document.getElementById('caja-mes-filtro').value = mesActual;
+            
+            aplicarRolSeguro(); 
+
+            var vistaGuardada = localStorage.getItem('vistaActual') || 'view-dashboard';
+            document.querySelectorAll('.sidebar-item').forEach(i => {
+                if(i.getAttribute('onclick').includes(vistaGuardada)) i.classList.add('active');
+            });
+            document.querySelectorAll('.mobile-nav-item').forEach(i => {
+                if(i.getAttribute('onclick').includes(vistaGuardada)) i.classList.add('active');
+            });
+            cambiarSeccion(vistaGuardada); 
+        };
+
+        function aplicarRolSeguro() {
+            var esAdmin = document.getElementById('rol-toggle').checked;
+            document.querySelectorAll('.admin-only-item').forEach(el => el.style.display = '');
+
+            if (esAdmin) {
+                document.body.classList.remove('modo-socio');
+            } else {
+                document.body.classList.add('modo-socio');
+                var vistaActual = document.querySelector('.page-view.active');
+                if (vistaActual && vistaActual.classList.contains('admin-only-item')) {
+                    cambiarSeccion('view-dashboard', document.querySelector('.sidebar-item'));
+                }
+            }
+        }
+
+        function cambiarSeccion(seccionId, elem) {
+            document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+            document.querySelectorAll('.mobile-nav-item').forEach(i => i.classList.remove('active'));
+            
+            var targetView = document.getElementById(seccionId);
+            if (targetView) targetView.classList.add('active');
+            
+            if(elem) elem.classList.add('active');
+            
+            localStorage.setItem('vistaActual', seccionId);
+            
+            var dropdown = document.getElementById('mobile-dropdown');
+            if(dropdown && dropdown.classList.contains('show')) dropdown.classList.remove('show');
+
+            ejecutarCargas(seccionId);
+        }
+
+        function ejecutarCargas(id) {
+            if(id === 'view-dashboard') actualizarDashboard();
+            if(id === 'view-listado') cargarDirectorioCompleto();
+            if(id === 'view-calendario') cargarAgendaDiaria();
+            if(id === 'view-caja') { cargarSelectoresSocios(); cargarListasAsistenciaCajaPorMes(); document.getElementById('caja-whatsapp-container').innerHTML=''; }
+            if(id === 'view-creditos') { cargarSelectoresSocios(); actualizarFondoLiquidoEnCreditos(); document.getElementById('recibo-descargable').style.display='none'; document.getElementById('box-tabla-previa').style.display='none'; }
+            if(id === 'view-abonos') cargarSeccionAbonos();
+        }
+
+        function actualizarDashboard() {
+            google.script.run.withSuccessHandler(function(m) {
+                if(m){
+                    document.getElementById('num-fondo').innerText = '$' + m.fondoComun.toFixed(2);
+                    document.getElementById('num-prestado').innerText = '$' + m.totalPrestado.toFixed(2);
+                    document.getElementById('num-socios').innerText = m.totalSocios;
+                    if(document.getElementById('num-intereses')) document.getElementById('num-intereses').innerText = '$' + m.totalInteresesGanados.toFixed(2);
+                    if(document.getElementById('num-multas')) document.getElementById('num-multas').innerText = '$' + m.totalMultas.toFixed(2);
+                    liquidezGlobalCalculada = parseFloat(m.fondoComun) || 0;
+                }
+            }).obtenerMetricasDashboard();
+        }
+
+        function actualizarFondoLiquidoEnCreditos() {
+            var labelLiquidez = document.getElementById('credito-liquidez-disponible');
+            if(labelLiquidez) labelLiquidez.innerText = "Consultando caja...";
+            google.script.run.withSuccessHandler(function(m) {
+                if(m && labelLiquidez) {
+                    labelLiquidez.innerText = '$' + m.fondoComun.toFixed(2);
+                    liquidezGlobalCalculada = parseFloat(m.fondoComun) || 0;
+                }
+            }).obtenerMetricasDashboard();
+        }
+
+        function cargarSelectoresSocios() {
+            google.script.run.withSuccessHandler(function(lista) {
+                var s1 = document.getElementById('caja-socio'); var s2 = document.getElementById('credito-socio');
+                [s1, s2].forEach(sel => {
+                    if(!sel) return; sel.innerHTML = '';
+                    lista.forEach(s => { var opt = document.createElement('option'); opt.value = s.id; opt.text = s.nombre + ' (' + s.id + ')'; sel.appendChild(opt); });
+                });
+            }).obtenerListaSocios();
+        }
+
+        function exportarCSV() {
+            var tabla = document.getElementById('tabla-exportable');
+            var filas = tabla.querySelectorAll('tr');
+            var csv = [];
+            for (var i = 0; i < filas.length; i++) {
+                var celdas = filas[i].querySelectorAll('th, td');
+                var filaCsv = [];
+                for (var j = 0; j < celdas.length - 1; j++) { 
+                    var texto = celdas[j].innerText.replace(/,/g, ''); 
+                    filaCsv.push(texto);
+                }
+                csv.push(filaCsv.join(","));
+            }
+            var csvFile = new Blob(["\uFEFF" + csv.join("\n")], { type: "text/csv;charset=utf-8;" }); 
+            var link = document.createElement("a");
+            link.href = URL.createObjectURL(csvFile);
+            link.download = "Balance_Directorio_CrediAhorro.csv";
+            link.click();
+            mostrarToast("Archivo Excel (CSV) descargado con éxito.");
+        }
+
+        function cargarAgendaDiaria() {
+            var contenedor = document.getElementById('contenedor-agenda');
+            contenedor.innerHTML = '<p style="color:var(--text-muted);">Sincronizando bloques de tiempo...</p>';
+            google.script.run.withSuccessHandler(function(agenda) {
+                contenedor.innerHTML = '';
+                if(agenda.length === 0) {
+                    contenedor.innerHTML = '<p style="color:var(--text-muted);">No hay créditos vigentes programados.</p>'; return;
+                }
+                agenda.forEach(a => {
+                    contenedor.innerHTML += `
+                        <div class="agenda-block">
+                            <div>
+                                <h5><i class="fa-solid fa-user"></i> ${a.socio}</h5>
+                                <p><strong>Préstamo:</strong> ${a.idCredito} - <strong>Inicio:</strong> ${a.fechaBase}</p>
+                                <p><strong>Frecuencia:</strong> ${a.frecuencia} - <strong>Total Adeudado:</strong> $${a.montoTotal.toFixed(2)}</p>
+                            </div>
+                            <div class="time-badge"><i class="fa-regular fa-clock"></i> ${a.hora}</div>
+                        </div>`;
+                });
+            }).obtenerAgendaPagos();
+        }
+
+        function verFichaSocio(idSocio) {
+            var tbodyGlobal = document.getElementById('f-tabla-historial-global-cuerpo');
+            var boxCredito = document.getElementById('f-box-credito-activo');
+            tbodyGlobal.innerHTML = '<tr><td colspan="4" style="text-align:center;">Compilando línea de tiempo completa del integrante...</td></tr>';
+            boxCredito.innerHTML = 'Consultando créditos...';
+            google.script.run.withSuccessHandler(function(p) {
+                if(p) {
+                    document.getElementById('ficha-socio-desplegable').style.display = 'block';
+                    document.getElementById('f-nombre').innerText = "Expediente: " + p.nombre;
+                    document.getElementById('f-id').innerText = p.id;
+                    document.getElementById('f-ahorro').innerText = '$' + p.ahorroSemanal.toFixed(2);
+                    document.getElementById('f-deuda').innerText = '$' + p.deudaActual.toFixed(2);
+                    document.getElementById('f-multas').innerText = '$' + p.multas.toFixed(2);
+                    
+                    tbodyGlobal.innerHTML = '';
+                    var historial = p.historialCompleto || [];
+                    if(historial.length > 0) {
+                        var isAd = document.getElementById('rol-toggle').checked;
+                        historial.forEach(item => {
+                            var badgeStyle = ""; var signo = "+";
+                            if (item.tipo === "INGRESO") { badgeStyle = "badge-ingreso"; signo = "+"; }
+                            else if (item.tipo === "ABONO_PRESTAMO") { badgeStyle = "badge-abono"; signo = "+"; }
+                            else if (item.tipo === "DESEMBOLSO") { badgeStyle = "badge-desembolso"; signo = "-"; }
+
+                            var btnEliminar = (item.idTrans && isAd) ? `<button onclick="ejecutarEliminarMovimiento('${item.idTrans}')" style="background:none; border:none; color:var(--danger); cursor:pointer; margin-left:12px;" title="Eliminar Movimiento"><i class="fa-solid fa-trash"></i></button>` : '';
+                            tbodyGlobal.innerHTML += `<tr>
+                                <td style="color:var(--text-muted); font-size:13px;">${item.fecha}</td>
+                                <td><strong>${item.concepto}</strong></td>
+                                <td style="text-align:center;"><span class="badge-tipo ${badgeStyle}">${item.tipo}</span></td>
+                                <td style="text-align:right;">
+                                    <span style="font-weight:700; color:${signo === '+' ? 'var(--success)' : 'var(--danger)'}">${signo}$${item.monto.toFixed(2)}</span>
+                                    ${btnEliminar}
+                                </td>
+                            </tr>`;
+                        });
+                    } else {
+                        tbodyGlobal.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No existen registros vinculados a este socio.</td></tr>';
+                    }
+
+                    if(p.creditosActivos && p.creditosActivos.length > 0) {
+                        boxCredito.innerHTML = '';
+                        p.creditosActivos.forEach(c => {
+                            boxCredito.innerHTML += `<div style="margin-top:10px; font-size:14px; line-height:1.6; border-bottom: 1px dashed #333; padding-bottom: 15px; margin-bottom: 15px;">
+                                <div class="recibo-row"><span>Código Préstamo:</span><strong>${c.idCredito}</strong></div>
+                                <div class="recibo-row"><span>Fecha Otorgado:</span><strong>${c.fechaApertura}</strong></div>
+                                <div class="recibo-row"><span>Monto Entregado:</span><strong>$${c.montoPrestado.toFixed(2)}</strong></div>
+                                <div class="recibo-row"><span>Total con Interés:</span><strong>$${c.totalConInteres.toFixed(2)}</strong></div>
+                                <div class="recibo-row"><span>Total Abonado a la Fecha:</span><strong style="color:var(--success)">$${c.montoAbonado.toFixed(2)}</strong></div>
+                                <div class="recibo-row" style="border-top:1px dashed #444; margin-top:10px; padding-top:5px;"><span style="color:var(--danger)">SALDO TOTAL PENDIENTE:</span><strong style="color:var(--danger); font-size:15px;">$${c.saldoPendiente.toFixed(2)}</strong></div>
+                            </div>`;
+                        });
+                    } else {
+                        boxCredito.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px 0; font-size:13px;">Este integrante no cuenta con ningún crédito activo en este momento.</p>';
+                    }
+                    document.getElementById('ficha-socio-desplegable').scrollIntoView({ behavior: 'smooth' });
+                }
+            }).consultarPerfilIntegrante(idSocio);
+        }
+
+        function guardarCaja() {
+            var s = document.getElementById('caja-socio').value; 
+            var selElement = document.getElementById('caja-socio');
+            var nombreSocioLimpio = selElement.options[selElement.selectedIndex].text.split(' (')[0];
+            var m = document.getElementById('caja-monto').value; 
+            var f = document.getElementById('caja-fecha-movimiento').value; 
+            var t = document.getElementById('caja-tipo').value;
+            if(!m || !f) return mostrarToast("Por favor ingresa monto y fecha.");
+            
+            google.script.run.withSuccessHandler(function(r){ 
+                mostrarToast(r.mensaje); 
+                document.getElementById('caja-monto').value = '';
+                cargarListasAsistenciaCajaPorMes(); 
+                
+                var wMsg = `Hola ${nombreSocioLimpio}, confirmamos la recepción exitosa de tu ${t} por la cantidad de $${m} con fecha de registro: ${f}. ¡Gracias por tu puntualidad!`;
+                var wLink = `https://wa.me/?text=${encodeURIComponent(wMsg)}`;
+                document.getElementById('caja-whatsapp-container').innerHTML = `
+                    <a href="${wLink}" target="_blank" class="btn-submit" style="background:#25D366; color:#000; text-decoration:none; margin-top:20px;">
+                        <i class="fa-brands fa-whatsapp" style="font-size:20px;"></i> Enviar Recibo Automático por WhatsApp
+                    </a>`;
+            }).registrarTransaccionCaja(s, m, f, t);
+        }
+
+        function cargarListasAsistenciaCajaPorMes() {
+            var mesFiltro = document.getElementById('caja-mes-filtro').value;
+            var boxPagados = document.getElementById('lista-asistencia-pagados');
+            var boxDeudores = document.getElementById('lista-asistencia-deudores');
+            boxPagados.innerHTML = 'Procesando...'; boxDeudores.innerHTML = 'Procesando...';
+            google.script.run.withSuccessHandler(function(lista) {
+                boxPagados.innerHTML = ''; boxDeudores.innerHTML = '';
+                var cPagados = 0; var cDeudores = 0;
+                lista.forEach(s => {
+                    var html = `<div class="item-socio-status"><span>${s.nombre}</span><small style="color:var(--text-muted)">${s.id}</small></div>`;
+                    if(s.pagoRealizado) { boxPagados.innerHTML += html; cPagados++; } 
+                    else { boxDeudores.innerHTML += html; cDeudores++; }
+                });
+                if(cPagados === 0) boxPagados.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Sin registros en este mes.</p>';
+                if(cDeudores === 0) boxDeudores.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">¡Todos tienen movimientos!</p>';
+            }).obtenerEstatusPagosCajaPorMes(mesFiltro);
+        }
+
+        function cargarDirectorioCompleto() {
+            var tbody = document.getElementById('tabla-directorio-cuerpo');
+            tbody.innerHTML = '<tr><td colspan="5">Sincronizando directorio...</td></tr>';
+            google.script.run.withSuccessHandler(function(lista) {
+                tbody.innerHTML = '';
+                if(!lista || lista.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5">No hay socios registrados.</td></tr>'; return;
+                }
+                var isAd = document.getElementById('rol-toggle').checked;
+                lista.forEach(s => {
+                    var btnEdit = isAd ? `<button class="btn-secondary" style="background:#262626; border-color:#444;" onclick="ejecutarModificarSocio('${s.id}', '${s.nombre}')" title="Modificar Datos"><i class="fa-solid fa-pen"></i></button>` : '';
+                    var tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${s.id}</td><td><strong>${s.nombre}</strong></td><td>$${s.ahorroSemanal.toFixed(2)}</td><td style="color:var(--danger)">$${s.deudaActual.toFixed(2)}</td>
+                    <td style="display:flex; gap:8px;">
+                        <button class="btn-secondary" onclick="verFichaSocio('${s.id}')">Ver Ficha</button>
+                        ${btnEdit}
+                    </td>`;
+                    tbody.appendChild(tr);
+                });
+            }).obtenerDirectorioCompleto();
+        }
+
+        function previsualizarAmortizacion() {
+            var m = document.getElementById('credito-monto').value;
+            var i = document.getElementById('credito-interes').value;
+            var c = document.getElementById('credito-cuotas').value;
+            var f = document.getElementById('credito-frecuencia').value;
+            var fe = document.getElementById('credito-fecha-inicio').value;
+            var ho = document.getElementById('credito-hora-inicio').value;
+            var selSocioTxt = document.getElementById('credito-socio').options[document.getElementById('credito-socio').selectedIndex].text;
+            
+            if(!m || !fe) return mostrarToast("Coloca el monto y la fecha base.");
+            google.script.run.withSuccessHandler(function(tabla) {
+                document.getElementById('box-tabla-previa').style.display = 'block';
+                document.getElementById('pre-socio-txt').innerText = selSocioTxt;
+                document.getElementById('pre-monto-txt').innerText = '$' + tabla.montoFinanciado.toFixed(2);
+                document.getElementById('pre-total-txt').innerText = '$' + tabla.totalPagar.toFixed(2);
+                
+                var tbody = document.getElementById('tabla-previa-cuerpo'); tbody.innerHTML = '';
+                tabla.cronograma.forEach(cr => {
+                    tbody.innerHTML += `<tr><td>Cuota ${cr.numCuota}</td><td>${cr.fechaPago}</td><td><strong>$${cr.monto}</strong></td></tr>`;
+                });
+            }).calcularTablaAmortizacion(m, i, c, f, fe, ho);
+        }
+
+        function descargarTablaAmortizacionComoImagen() {
+            var zona = document.getElementById('tabla-amortizacion-captura-zona');
+            var socioNom = document.getElementById('pre-socio-txt').innerText;
+            mostrarToast("Procesando imagen de la tabla de pagos...");
+            html2canvas(zona, { backgroundColor: "#111111", scale: 2 }).then(canvas => {
+                var enlace = document.createElement('a');
+                enlace.download = 'TablaPagos-' + socioNom.replace(/ /g, "_") + '.png';
+                enlace.href = canvas.toDataURL('image/png'); enlace.click();
+                mostrarToast("¡Imagen de tabla descargada!");
+            });
+        }
+
+        function emitirCreditoDefinitivo() {
+            var s = document.getElementById('credito-socio').value;
+            var selSocioTxt = document.getElementById('credito-socio').options[document.getElementById('credito-socio').selectedIndex].text;
+            var m = document.getElementById('credito-monto').value;
+            var i = document.getElementById('credito-interes').value;
+            var c = document.getElementById('credito-cuotas').value;
+            var f = document.getElementById('credito-frecuencia').value;
+            var fe = document.getElementById('credito-fecha-inicio').value;
+            var ho = document.getElementById('credito-hora-inicio').value;
+            
+            if(!m || !fe) return mostrarToast("Rellene los campos obligatorios.");
+            var montoNumericoSolicitado = parseFloat(m) || 0;
+            if (montoNumericoSolicitado > liquidezGlobalCalculada) {
+                return mostrarToast("❌ ERROR: Liquidez insuficiente en caja. No se puede otorgar este crédito.");
+            }
+            
+            google.script.run.withSuccessHandler(function(r) {
+                if(r.status === "OK") {
+                    mostrarToast(r.mensaje);
+                    document.getElementById('rec-id-cre').innerText = r.idCredito;
+                    document.getElementById('rec-socio').innerText = selSocioTxt;
+                    document.getElementById('rec-monto').innerText = '$' + parseFloat(m).toFixed(2);
+                    document.getElementById('rec-interes').innerText = i + '%';
+                    document.getElementById('rec-plazo').innerText = c + ' Cuotas (' + f + ')';
+                    document.getElementById('rec-fecha').innerText = fe + ' / ' + ho;
+                    document.getElementById('rec-total').innerText = '$' + r.total;
+                    document.getElementById('recibo-descargable').style.display = 'block';
+                    document.getElementById('recibo-descargable').scrollIntoView({ behavior: 'smooth' });
+                    actualizarDashboard();
+                    actualizarFondoLiquidoEnCreditos();
+                }
+            }).otorgarCredito(s, m, i, c, f, fe, ho);
+        }
+
+        function descargarReciboComoImagen() {
+            var zona = document.getElementById('recibo-captura-zona');
+            mostrarToast("Procesando imagen del recibo...");
+            html2canvas(zona, { backgroundColor: "#111111", scale: 2 }).then(canvas => {
+                var enlace = document.createElement('a');
+                enlace.download = 'Pagare-' + document.getElementById('rec-id-cre').innerText + '.png';
+                enlace.href = canvas.toDataURL('image/png'); enlace.click();
+                mostrarToast("¡Imagen del recibo descargada!");
+            });
+        }
+
+        function cargarSeccionAbonos() {
+            var select = document.getElementById('abono-credito');
+            select.innerHTML = '<option>Cargando créditos vigentes...</option>';
+            google.script.run.withSuccessHandler(function(lista) {
+                select.innerHTML = '';
+                if(lista.length === 0) {
+                    select.innerHTML = '<option value="">No hay créditos vigentes por cobrar</option>'; return;
+                }
+                lista.forEach(c => { 
+                    var opt = document.createElement('option'); opt.value = c.idCredito; 
+                    opt.text = `${c.idCredito} - ${c.nombreSocio} (Resta: $${c.saldoPendiente.toFixed(2)})`; 
+                    select.appendChild(opt); 
+                });
+            }).obtenerCreditosVigentes();
+        }
+
+        function procesarAbono() {
+            var cr = document.getElementById('abono-credito').value;
+            var m = document.getElementById('abono-monto').value; 
+            var co = document.getElementById('abono-concepto').value;
+            
+            if(!cr) return mostrarToast("No hay ningún crédito seleccionado.");
+            if(!m || parseFloat(m) <= 0) return mostrarToast("Por favor ingresa un monto válido.");
+            google.script.run.withSuccessHandler(function(r){ 
+                mostrarToast(r.mensaje); 
+                document.getElementById('abono-monto').value = '';
+                actualizarDashboard(); cargarSeccionAbonos(); 
+            }).registrarAbonoPrestamo(cr, m, co);
+        }
+
+        function enviarSocioNuevo() {
+            var n = document.getElementById('reg-nombre').value;
+            var t = document.getElementById('reg-telefono').value; var i = document.getElementById('reg-inicial').value;
+            if(!n) return mostrarToast("El nombre es obligatorio.");
+            google.script.run.withSuccessHandler(function(r){ 
+                mostrarToast(r.mensaje); 
+                document.getElementById('reg-nombre').value = '';
+                document.getElementById('reg-telefono').value = '';
+                document.getElementById('reg-inicial').value = '0';
+                cambiarSeccion('view-dashboard'); 
+            }).registrarIntegrante(n,t,i);
+        }
+
+        function mostrarToast(m) { 
+            var t = document.getElementById('toast');
+            t.innerText = m; t.style.display = 'block'; 
+            setTimeout(() => t.style.display='none', 4000);
+        }
+
+        function ejecutarEliminarSocio() {
+            var id = document.getElementById('f-id').innerText;
+            if (confirm("⚠️ ¿Estás seguro de eliminar este socio? Esta acción borrará su registro principal permanentemente.")) {
+                google.script.run.withSuccessHandler(function(r) {
+                    mostrarToast(r.mensaje);
+                    document.getElementById('ficha-socio-desplegable').style.display = 'none';
+                    cargarDirectorioCompleto();
+                    actualizarDashboard();
+                }).eliminarSocio(id);
+            }
+        }
+
+        function ejecutarEliminarMovimiento(idTrans) {
+            if (confirm("⚠️ ¿Seguro que deseas eliminar este movimiento de caja? Esto recalculará los saldos de inmediato.")) {
+                google.script.run.withSuccessHandler(function(r) {
+                    mostrarToast(r.mensaje);
+                    var idSocio = document.getElementById('f-id').innerText;
+                    verFichaSocio(idSocio); 
+                    cargarDirectorioCompleto();
+                    actualizarDashboard();
+                }).eliminarTransaccion(idTrans);
+            }
+        }
+
+        function ejecutarModificarSocio(id, nombreActual) {
+            var nuevoNombre = prompt("Modificar nombre del socio:", nombreActual);
+            if (nuevoNombre !== null && nuevoNombre.trim() !== "") {
+                var nuevoTelefono = prompt("Modificar teléfono (deja en blanco para mantener el actual):", "");
+                google.script.run.withSuccessHandler(function(r) {
+                    mostrarToast(r.mensaje);
+                    cargarDirectorioCompleto();
+                }).modificarSocio(id, nuevoNombre.trim(), nuevoTelefono);
+            }
+        }
+    </script>
+</body>
+</html>
